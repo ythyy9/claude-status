@@ -1,0 +1,293 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Claude 续费一览</title>
+<meta name="description" content="Claude 账号的开通日、下次续费时间、付款卡、服务器与每月总价。">
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#f5f3ee" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#141311" media="(prefers-color-scheme: dark)">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='15' fill='%23c45a2c'/%3E%3Cpath d='M16 8v8l5 3' stroke='white' stroke-width='3' fill='none' stroke-linecap='round'/%3E%3C/svg%3E">
+<style>
+  :root {
+    --bg: #f5f3ee;
+    --surface: #fffdf9;
+    --text: #1d1b18;
+    --muted: #6f695f;
+    --faint: #8f897f;
+    --line: #e7e2d8;
+    --track: #ece7de;
+    --accent: #c45a2c;
+    --accent-soft: #f6e3d8;
+    --warn: #c2261d;
+    color-scheme: light;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #141311;
+      --surface: #1d1c19;
+      --text: #f2efe9;
+      --muted: #aaa49a;
+      --faint: #858077;
+      --line: #302d28;
+      --track: #2c2a26;
+      --accent: #e9915f;
+      --accent-soft: #3a2a20;
+      --warn: #f27d72;
+      color-scheme: dark;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #141311;
+    --surface: #1d1c19;
+    --text: #f2efe9;
+    --muted: #aaa49a;
+    --faint: #858077;
+    --line: #302d28;
+    --track: #2c2a26;
+    --accent: #e9915f;
+    --accent-soft: #3a2a20;
+    --warn: #f27d72;
+    color-scheme: dark;
+  }
+
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font: 15px/1.55 -apple-system, BlinkMacSystemFont, "PingFang SC", "Hiragino Sans GB",
+      "Microsoft YaHei", "Noto Sans SC", "Segoe UI", sans-serif;
+  }
+  main { max-width: 860px; margin: 0 auto; padding: 44px 16px 48px; }
+
+  .top h1 { margin: 0 0 6px; font-size: 28px; line-height: 1.2; font-weight: 700; }
+  .today { margin: 0; color: var(--muted); }
+  .next {
+    display: inline-block;
+    margin: 16px 0 0;
+    padding: 6px 14px;
+    border-radius: 999px;
+    background: var(--accent-soft);
+    font-size: 14px;
+  }
+  .next b { color: var(--accent); font-weight: 600; }
+
+  .grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 16px;
+    margin-top: 28px;
+  }
+  @media (min-width: 640px) {
+    .grid { grid-template-columns: repeat(2, 1fr); }
+  }
+  .card {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    padding: 20px;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 16px;
+  }
+  .card-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; }
+  .card h2 { margin: 0; font-size: 18px; line-height: 1.3; }
+  .owner { margin: 2px 0 0; color: var(--muted); font-size: 14px; }
+  .plan {
+    flex: none;
+    padding: 3px 10px;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    font-size: 13px;
+    font-weight: 600;
+    white-space: nowrap;
+  }
+
+  .countdown { display: flex; align-items: baseline; gap: 6px; }
+  .num {
+    font-size: 44px;
+    line-height: 1;
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+    color: var(--accent);
+  }
+  .unit { color: var(--muted); }
+  .until { margin: 8px 0 0; font-size: 14px; }
+  .bar { height: 6px; margin-top: 14px; border-radius: 999px; background: var(--track); overflow: hidden; }
+  .bar span { display: block; height: 100%; border-radius: inherit; background: var(--accent); }
+  .period {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 6px;
+    color: var(--faint);
+    font-size: 12px;
+    font-variant-numeric: tabular-nums;
+  }
+  .soon .num { color: var(--warn); }
+  .soon .bar span { background: var(--warn); }
+
+  dl { display: grid; gap: 8px; margin: 0; }
+  dl div { display: flex; justify-content: space-between; gap: 12px; }
+  dt { color: var(--muted); }
+  dd { margin: 0; text-align: right; font-weight: 500; }
+
+  .total {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-top: auto;
+    padding-top: 14px;
+    border-top: 1px solid var(--line);
+  }
+  .total .label { color: var(--muted); }
+  .total strong { font-size: 24px; font-variant-numeric: tabular-nums; }
+  .total small { margin-left: 2px; color: var(--muted); font-size: 14px; }
+
+  .foot { margin-top: 32px; color: var(--faint); font-size: 13px; }
+  noscript p { color: var(--warn); }
+
+  @media (max-width: 480px) {
+    main { padding-top: 32px; }
+    .top h1 { font-size: 24px; }
+  }
+</style>
+</head>
+<body>
+<main>
+  <header class="top">
+    <h1>Claude 续费一览</h1>
+    <p class="today" id="today"></p>
+    <p class="next" id="next" hidden></p>
+  </header>
+
+  <section class="grid" id="cards" aria-label="账号列表"></section>
+  <noscript><p>需要开启 JavaScript 才能计算续费日期。</p></noscript>
+
+  <footer class="foot">
+    按北京时间计算：每月在开通日续费，当月没有这一天时在月底续费。个人记录，非 Anthropic 官方页面。
+  </footer>
+</main>
+
+<script>
+  // ===== 改这里就行 =====
+  // day：每月开通/续费日；price：每月总价（含服务器）
+  const CURRENCY = "¥";
+  const ACCOUNTS = [
+    { name: "Claude 1", owner: "cancanking", day: 23, plan: "Max 20x", card: "X Card",   servers: "BWG1 + ATT1",  price: 1630 },
+    { name: "Claude 2", owner: "taotao",     day: 29, plan: "Max 20x", card: "嘉信白卡", servers: "BWG1 + ATT1",  price: 1335 },
+    { name: "Claude 3", owner: "ccmax",      day: 29, plan: "Max 5x",  card: "X Card",   servers: "BWG2 + Atlas", price: 950 },
+    { name: "Claude 4", owner: "shanyao",    day: 5,  plan: "Max 5x",  card: "X Card",   servers: "BWG1 + ATT1",  price: 670 },
+  ];
+  const SOON_DAYS = 3; // 剩余天数不超过这个值时标红
+  // =====================
+
+  const DAY_MS = 86400000;
+  const WEEKDAYS = ["日", "一", "二", "三", "四", "五", "六"];
+
+  function todayInShanghai() {
+    const parts = {};
+    new Intl.DateTimeFormat("en-CA", {
+      timeZone: "Asia/Shanghai", year: "numeric", month: "numeric", day: "numeric",
+    }).formatToParts(new Date()).forEach(p => { parts[p.type] = p.value; });
+    return Date.UTC(+parts.year, +parts.month - 1, +parts.day);
+  }
+
+  // 某年某月的续费日；当月天数不够时取月底。month 可以越界（如 12、-1）
+  function billingDay(year, month, day) {
+    const first = new Date(Date.UTC(year, month, 1));
+    const y = first.getUTCFullYear();
+    const m = first.getUTCMonth();
+    const lastDay = new Date(Date.UTC(y, m + 1, 0)).getUTCDate();
+    return Date.UTC(y, m, Math.min(day, lastDay));
+  }
+
+  function cycleOf(today, day) {
+    const t = new Date(today);
+    const y = t.getUTCFullYear();
+    const m = t.getUTCMonth();
+    let next = billingDay(y, m, day);
+    let prev;
+    if (next < today) {
+      prev = next;
+      next = billingDay(y, m + 1, day);
+    } else {
+      prev = billingDay(y, m - 1, day);
+    }
+    const total = Math.round((next - prev) / DAY_MS);
+    const left = Math.round((next - today) / DAY_MS);
+    return { prev, next, left, total };
+  }
+
+  function fmtDate(ms, today) {
+    const d = new Date(ms);
+    const md = `${d.getUTCMonth() + 1}月${d.getUTCDate()}日`;
+    return d.getUTCFullYear() === new Date(today).getUTCFullYear() ? md : `${d.getUTCFullYear()}年${md}`;
+  }
+
+  function fmtShort(ms) {
+    const d = new Date(ms);
+    return `${d.getUTCMonth() + 1}/${d.getUTCDate()}`;
+  }
+
+  function esc(s) {
+    return String(s).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+  }
+
+  function render() {
+    const today = todayInShanghai();
+    const t = new Date(today);
+    document.getElementById("today").textContent =
+      `今天 ${t.getUTCFullYear()}年${t.getUTCMonth() + 1}月${t.getUTCDate()}日 星期${WEEKDAYS[t.getUTCDay()]} · 北京时间`;
+
+    const rows = ACCOUNTS.map(a => ({ ...a, c: cycleOf(today, a.day) }));
+
+    const minLeft = Math.min(...rows.map(r => r.c.left));
+    const soonest = rows.filter(r => r.c.left === minLeft);
+    const when = minLeft === 0 ? "今天" : `${minLeft} 天后`;
+    const next = document.getElementById("next");
+    next.innerHTML = `下一次续费：<b>${esc(soonest.map(r => r.name).join("、"))}</b> · ${fmtDate(soonest[0].c.next, today)}（${when}）`;
+    next.hidden = false;
+
+    document.getElementById("cards").innerHTML = rows.map(r => {
+      const { prev, next, left, total } = r.c;
+      const pct = Math.min(100, Math.max(0, ((total - left) / total) * 100));
+      const soon = left <= SOON_DAYS;
+      const countdown = left === 0
+        ? `<span class="num">今天</span><span class="unit">续费</span>`
+        : `<span class="num">${left}</span><span class="unit">天后续费</span>`;
+      return `
+        <article class="card${soon ? " soon" : ""}">
+          <div class="card-head">
+            <div>
+              <h2>${esc(r.name)}</h2>
+              <p class="owner">${esc(r.owner)}</p>
+            </div>
+            <span class="plan">${esc(r.plan)}</span>
+          </div>
+          <div>
+            <div class="countdown">${countdown}</div>
+            <p class="until">有效期至 ${fmtDate(next, today)}</p>
+            <div class="bar" role="progressbar" aria-label="本期已用" aria-valuemin="0" aria-valuemax="${total}" aria-valuenow="${total - left}"><span style="width:${pct.toFixed(1)}%"></span></div>
+            <div class="period"><span>${fmtShort(prev)}</span><span>${fmtShort(next)}</span></div>
+          </div>
+          <dl>
+            <div><dt>开通日</dt><dd>每月 ${r.day} 号</dd></div>
+            <div><dt>付款卡</dt><dd>${esc(r.card)}</dd></div>
+            <div><dt>服务器</dt><dd>${esc(r.servers)}</dd></div>
+          </dl>
+          <div class="total">
+            <span class="label">总价</span>
+            <span><strong>${CURRENCY}${r.price.toLocaleString("zh-CN")}</strong><small>/ 月</small></span>
+          </div>
+        </article>`;
+    }).join("");
+  }
+
+  render();
+  setInterval(render, 10 * 60 * 1000);
+</script>
+</body>
+</html>
