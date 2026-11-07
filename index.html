@@ -174,13 +174,14 @@
 <script>
   // ===== 改这里就行 =====
   // day：每月开通/续费日；price：每月总价（含服务器）
+  // since（可选）：首次开通日期，开通当天显示“今天开通”，不算续费
   const CURRENCY = "¥";
   const ACCOUNTS = [
     { name: "Claude 1", owner: "cancanking", day: 23, plan: "Max 20x", card: "X Card",   servers: "BWG1 + ATT1",  price: 1630 },
     { name: "Claude 2", owner: "taotao",     day: 29, plan: "Max 20x", card: "嘉信白卡", servers: "BWG1 + ATT1",  price: 1335 },
     { name: "Claude 3", owner: "ccmax",      day: 29, plan: "Max 5x",  card: "X Card",   servers: "BWG2 + Atlas", price: 950 },
     { name: "Claude 4", owner: "shanyao",    day: 5,  plan: "Max 5x",  card: "X Card",   servers: "BWG1 + ATT1",  price: 670 },
-    { name: "Claude 5", owner: "Crimson",    day: 7,  plan: "Max 5x",  card: "嘉信白卡", servers: "自备",         price: 670 },
+    { name: "Claude 5", owner: "Crimson",    day: 7,  plan: "Max 5x",  card: "嘉信白卡", servers: "自备",         price: 670, since: "2026-11-07" },
   ];
   const SOON_DAYS = 3; // 剩余天数不超过这个值时标红
   // =====================
@@ -205,13 +206,20 @@
     return Date.UTC(y, m, Math.min(day, lastDay));
   }
 
-  function cycleOf(today, day) {
+  function parseDate(s) {
+    if (!s) return null;
+    const [y, m, d] = s.split("-").map(Number);
+    return Date.UTC(y, m - 1, d);
+  }
+
+  // 开通当天算新周期的第一天，而不是续费日
+  function cycleOf(today, day, since) {
     const t = new Date(today);
     const y = t.getUTCFullYear();
     const m = t.getUTCMonth();
     let next = billingDay(y, m, day);
     let prev;
-    if (next < today) {
+    if (next < today || next === since) {
       prev = next;
       next = billingDay(y, m + 1, day);
     } else {
@@ -243,7 +251,10 @@
     document.getElementById("today").textContent =
       `今天 ${t.getUTCFullYear()}年${t.getUTCMonth() + 1}月${t.getUTCDate()}日 星期${WEEKDAYS[t.getUTCDay()]} · 北京时间`;
 
-    const rows = ACCOUNTS.map(a => ({ ...a, c: cycleOf(today, a.day) }));
+    const rows = ACCOUNTS.map(a => {
+      const since = parseDate(a.since);
+      return { ...a, c: cycleOf(today, a.day, since), openedToday: since === today };
+    });
 
     const minLeft = Math.min(...rows.map(r => r.c.left));
     const soonest = rows.filter(r => r.c.left === minLeft);
@@ -270,7 +281,7 @@
           </div>
           <div>
             <div class="countdown">${countdown}</div>
-            <p class="until">有效期至 ${fmtDate(next, today)}</p>
+            <p class="until">${r.openedToday ? "今天开通 · " : ""}有效期至 ${fmtDate(next, today)}</p>
             <div class="bar" role="progressbar" aria-label="本期已用" aria-valuemin="0" aria-valuemax="${total}" aria-valuenow="${total - left}"><span style="width:${pct.toFixed(1)}%"></span></div>
             <div class="period"><span>${fmtShort(prev)}</span><span>${fmtShort(next)}</span></div>
           </div>
