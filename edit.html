@@ -1,0 +1,537 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>编辑续费信息</title>
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#f5f3ee" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#141311" media="(prefers-color-scheme: dark)">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='15' fill='%23c45a2c'/%3E%3Cpath d='M16 8v8l5 3' stroke='white' stroke-width='3' fill='none' stroke-linecap='round'/%3E%3C/svg%3E">
+<style>
+  :root {
+    --bg: #f5f3ee;
+    --surface: #fffdf9;
+    --field: #faf8f4;
+    --text: #1d1b18;
+    --muted: #6f695f;
+    --line: #e7e2d8;
+    --accent: #c45a2c;
+    --on-accent: #ffffff;
+    --warn: #c2261d;
+    --ok: #2f7d4f;
+    color-scheme: light;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #141311;
+      --surface: #1d1c19;
+      --field: #252320;
+      --text: #f2efe9;
+      --muted: #aaa49a;
+      --line: #34312c;
+      --accent: #e9915f;
+      --on-accent: #1d1208;
+      --warn: #f27d72;
+      --ok: #6cc08b;
+      color-scheme: dark;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #141311;
+    --surface: #1d1c19;
+    --field: #252320;
+    --text: #f2efe9;
+    --muted: #aaa49a;
+    --line: #34312c;
+    --accent: #e9915f;
+    --on-accent: #1d1208;
+    --warn: #f27d72;
+    --ok: #6cc08b;
+    color-scheme: dark;
+  }
+
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font: 15px/1.55 -apple-system, BlinkMacSystemFont, "PingFang SC", "Hiragino Sans GB",
+      "Microsoft YaHei", "Noto Sans SC", "Segoe UI", sans-serif;
+  }
+  main { max-width: 860px; margin: 0 auto; padding: 36px 16px 120px; }
+  a { color: var(--accent); }
+  [hidden] { display: none !important; }
+
+  .top { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; }
+  h1 { margin: 0; font-size: 24px; line-height: 1.25; }
+  .top-actions { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+
+  button {
+    font: inherit;
+    font-size: 14px;
+    padding: 7px 14px;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    background: var(--surface);
+    color: var(--text);
+    cursor: pointer;
+  }
+  button:hover { border-color: var(--muted); }
+  button.primary { background: var(--accent); border-color: var(--accent); color: var(--on-accent); font-weight: 600; }
+  button.danger { color: var(--warn); }
+  button:disabled { opacity: .55; cursor: default; }
+
+  .panel {
+    margin-top: 16px;
+    padding: 18px;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 16px;
+  }
+  .panel h2 { margin: 0; font-size: 16px; }
+  .intro { margin: 8px 0 0; color: var(--muted); }
+
+  label { display: flex; flex-direction: column; gap: 4px; font-size: 13px; color: var(--muted); }
+  input {
+    width: 100%;
+    min-width: 0;
+    padding: 8px 10px;
+    font: inherit;
+    font-size: 15px;
+    color: var(--text);
+    background: var(--field);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+  }
+  input:focus { outline: 2px solid var(--accent); outline-offset: -1px; }
+  input.invalid { border-color: var(--warn); outline-color: var(--warn); }
+
+  .steps { margin: 12px 0 16px; padding-left: 20px; color: var(--muted); font-size: 14px; }
+  .steps li { margin: 4px 0; }
+  .steps b { color: var(--text); font-weight: 600; }
+  .login-row { display: flex; gap: 10px; }
+  .login-row input { flex: 1; }
+  .hint { margin: 10px 0 0; font-size: 13px; color: var(--muted); }
+
+  .settings { display: flex; align-items: flex-end; gap: 12px; }
+  .settings label { width: 120px; flex: none; }
+  .settings .hint { margin: 0 0 9px; }
+
+  .acc-head { display: flex; justify-content: space-between; align-items: center; gap: 8px; margin-bottom: 14px; }
+  .acc-actions { display: flex; gap: 6px; flex: none; }
+  .acc-actions button { padding: 4px 10px; font-size: 13px; }
+  .fields { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+  @media (min-width: 680px) {
+    .fields { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  }
+  .add { width: 100%; margin-top: 16px; padding: 12px; border-style: dashed; color: var(--muted); }
+
+  .status { margin: 0; font-size: 14px; color: var(--muted); }
+  .status.err { color: var(--warn); }
+  .status.ok { color: var(--ok); }
+  .loading { margin-top: 20px; }
+
+  .savebar {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    padding: 12px 16px calc(12px + env(safe-area-inset-bottom));
+    background: var(--surface);
+    border-top: 1px solid var(--line);
+  }
+  .savebar-inner { max-width: 828px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+  .savebar .primary { flex: none; padding: 9px 22px; }
+</style>
+</head>
+<body>
+<main>
+  <header class="top">
+    <h1>编辑续费信息</h1>
+    <div class="top-actions">
+      <a href="./" target="_blank" rel="noopener">查看页面 ↗</a>
+      <button type="button" id="reload" hidden>重新加载</button>
+      <button type="button" id="logout" hidden>退出</button>
+    </div>
+  </header>
+
+  <p class="status loading" id="loading">正在连接 GitHub…</p>
+
+  <section class="panel" id="login" hidden>
+    <h2>先填一次 GitHub 令牌</h2>
+    <p class="intro">保存时要把修改写进 GitHub 仓库，所以需要一个只能改这个网站的令牌。令牌只存在这台设备的浏览器里。</p>
+    <ol class="steps">
+      <li>打开 <a href="https://github.com/settings/personal-access-tokens/new" target="_blank" rel="noopener">GitHub 新建令牌页面</a>（Fine-grained token）</li>
+      <li><b>Token name</b> 随便填，<b>Expiration</b> 选一个有效期</li>
+      <li><b>Repository access</b> 选 <b>Only select repositories</b>，再选 <b>ythyy9/claude-status</b></li>
+      <li><b>Permissions</b> 里点 <b>Add permissions</b>，选 <b>Contents</b>，权限改成 <b>Read and write</b></li>
+      <li>点 <b>Generate token</b>，复制以 <code>github_pat_</code> 开头的令牌，粘贴到下面</li>
+    </ol>
+    <form class="login-row" id="login-form">
+      <input type="password" id="token" autocomplete="off" spellcheck="false" placeholder="github_pat_…" aria-label="GitHub 令牌">
+      <button type="submit" class="primary">进入</button>
+    </form>
+    <p class="status" id="login-status" role="status"></p>
+  </section>
+
+  <section id="editor" hidden>
+    <div class="panel settings">
+      <label>货币符号<input id="currency" maxlength="4"></label>
+      <p class="hint">改完点底部的“保存”，大约 1 分钟后页面更新。</p>
+    </div>
+    <div id="accounts"></div>
+    <button type="button" class="add" id="add">＋ 新增账号</button>
+  </section>
+
+  <datalist id="plans"></datalist>
+  <datalist id="cards"></datalist>
+  <datalist id="servers"></datalist>
+</main>
+
+<div class="savebar" id="savebar" hidden>
+  <div class="savebar-inner">
+    <p class="status" id="status" role="status">没有修改</p>
+    <button type="button" class="primary" id="save">保存</button>
+  </div>
+</div>
+
+<script>
+  const REPO = "ythyy9/claude-status";
+  const API = `https://api.github.com/repos/${REPO}/contents/accounts.json`;
+  const TOKEN_KEY = "claude-status-token";
+
+  const FIELDS = [
+    { key: "name", label: "名称", placeholder: "Claude 6" },
+    { key: "owner", label: "使用者", placeholder: "名字" },
+    { key: "plan", label: "套餐", list: "plans", placeholder: "Max 5x" },
+    { key: "price", label: "每月总价", type: "number", min: "0", step: "any", inputmode: "decimal" },
+    { key: "day", label: "每月续费日", type: "number", min: "1", max: "31", step: "1", inputmode: "numeric" },
+    { key: "since", label: "首次开通日期（可选）", type: "date" },
+    { key: "card", label: "付款卡", list: "cards" },
+    { key: "servers", label: "服务器", list: "servers" },
+  ];
+
+  const $ = id => document.getElementById(id);
+  let token = null;
+  let sha = null;
+  let data = null;
+  let dirty = false;
+
+  function storeGet(k) { try { return localStorage.getItem(k); } catch { return null; } }
+  function storeSet(k, v) {
+    try { v == null ? localStorage.removeItem(k) : localStorage.setItem(k, v); } catch { /* 无痕模式等情况下不保存 */ }
+  }
+
+  function b64encode(str) {
+    const bytes = new TextEncoder().encode(str);
+    let bin = "";
+    for (let i = 0; i < bytes.length; i += 0x8000) bin += String.fromCharCode(...bytes.subarray(i, i + 0x8000));
+    return btoa(bin);
+  }
+  function b64decode(b64) {
+    const bin = atob(b64.replace(/\s/g, ""));
+    return new TextDecoder().decode(Uint8Array.from(bin, c => c.charCodeAt(0)));
+  }
+
+  function todayInShanghai() {
+    const p = {};
+    new Intl.DateTimeFormat("en-CA", { timeZone: "Asia/Shanghai", year: "numeric", month: "2-digit", day: "2-digit" })
+      .formatToParts(new Date()).forEach(x => { p[x.type] = x.value; });
+    return { iso: `${p.year}-${p.month}-${p.day}`, day: Number(p.day) };
+  }
+
+  async function api(method, body) {
+    let res;
+    const ctrl = new AbortController();
+    const timer = setTimeout(() => ctrl.abort(), 20000);
+    try {
+      res = await fetch(API, {
+        method,
+        cache: "no-store",
+        signal: ctrl.signal,
+        headers: {
+          Authorization: `Bearer ${token}`,
+          Accept: "application/vnd.github+json",
+          "X-GitHub-Api-Version": "2022-11-28",
+          ...(body ? { "Content-Type": "application/json" } : {}),
+        },
+        body: body ? JSON.stringify(body) : undefined,
+      });
+    } catch (err) {
+      const text = err.name === "AbortError" ? "连接 GitHub 超时，检查网络后再试" : "连不上 GitHub，检查网络后再试";
+      throw Object.assign(new Error(text), { status: 0 });
+    } finally {
+      clearTimeout(timer);
+    }
+    if (res.ok) return res.json();
+    const messages = {
+      401: "令牌无效或已过期，请重新填写",
+      403: method === "GET"
+        ? "GitHub 拒绝了请求：令牌权限不够，或请求太频繁"
+        : "令牌没有写入权限：创建令牌时要把 Contents 设为 Read and write",
+      404: "令牌看不到这个仓库：创建令牌时要选 ythyy9/claude-status",
+      409: "数据在别处被改过，请点“重新加载”后再改",
+    };
+    throw Object.assign(new Error(messages[res.status] || `GitHub 返回错误 ${res.status}`), { status: res.status });
+  }
+
+  function setStatus(el, text, kind) {
+    el.textContent = text;
+    el.className = "status" + (kind ? ` ${kind}` : "");
+  }
+
+  function markDirty() {
+    dirty = true;
+    setStatus($("status"), "有未保存的修改");
+  }
+
+  async function loadRemote() {
+    const res = await api("GET");
+    const parsed = JSON.parse(b64decode(res.content));
+    sha = res.sha;
+    data = {
+      currency: typeof parsed.currency === "string" ? parsed.currency : "¥",
+      accounts: Array.isArray(parsed.accounts) ? parsed.accounts : [],
+    };
+    dirty = false;
+    renderEditor();
+    setStatus($("status"), "没有修改");
+  }
+
+  function showLogin(message) {
+    $("loading").hidden = true;
+    $("login").hidden = false;
+    $("editor").hidden = true;
+    $("savebar").hidden = true;
+    $("reload").hidden = true;
+    $("logout").hidden = true;
+    setStatus($("login-status"), message || "", message ? "err" : "");
+  }
+
+  function showEditor() {
+    $("loading").hidden = true;
+    $("login").hidden = true;
+    $("editor").hidden = false;
+    $("savebar").hidden = false;
+    $("reload").hidden = false;
+    $("logout").hidden = false;
+  }
+
+  function fillList(id, values) {
+    const list = $(id);
+    list.innerHTML = "";
+    [...new Set(values.filter(Boolean))].forEach(v => {
+      const opt = document.createElement("option");
+      opt.value = v;
+      list.appendChild(opt);
+    });
+  }
+
+  function renderEditor() {
+    $("currency").value = data.currency;
+    fillList("plans", ["Max 20x", "Max 5x", "Pro", ...data.accounts.map(a => a.plan)]);
+    fillList("cards", [...data.accounts.map(a => a.card), "X Card", "嘉信白卡"]);
+    fillList("servers", [...data.accounts.map(a => a.servers), "自备"]);
+
+    const box = $("accounts");
+    box.innerHTML = "";
+    data.accounts.forEach((acc, i) => {
+      const panel = document.createElement("div");
+      panel.className = "panel";
+
+      const head = document.createElement("div");
+      head.className = "acc-head";
+      const title = document.createElement("h2");
+      title.textContent = acc.name || `账号 ${i + 1}`;
+      const actions = document.createElement("div");
+      actions.className = "acc-actions";
+      const mk = (text, onClick, opts = {}) => {
+        const b = document.createElement("button");
+        b.type = "button";
+        b.textContent = text;
+        if (opts.label) b.setAttribute("aria-label", opts.label);
+        if (opts.danger) b.className = "danger";
+        b.disabled = !!opts.disabled;
+        b.addEventListener("click", onClick);
+        return b;
+      };
+      actions.append(
+        mk("↑", () => move(i, -1), { label: "上移", disabled: i === 0 }),
+        mk("↓", () => move(i, 1), { label: "下移", disabled: i === data.accounts.length - 1 }),
+        mk("删除", () => remove(i), { danger: true }),
+      );
+      head.append(title, actions);
+
+      const fields = document.createElement("div");
+      fields.className = "fields";
+      FIELDS.forEach(f => {
+        const label = document.createElement("label");
+        label.textContent = f.label;
+        const input = document.createElement("input");
+        input.type = f.type || "text";
+        input.dataset.i = i;
+        input.dataset.key = f.key;
+        ["min", "max", "step", "placeholder", "inputmode"].forEach(k => { if (f[k]) input.setAttribute(k, f[k]); });
+        if (f.list) input.setAttribute("list", f.list);
+        input.value = acc[f.key] ?? "";
+        input.addEventListener("input", () => {
+          input.classList.remove("invalid");
+          if (f.type === "number") acc[f.key] = input.value === "" ? "" : Number(input.value);
+          else acc[f.key] = input.value;
+          if (f.key === "name") title.textContent = input.value || `账号 ${i + 1}`;
+          markDirty();
+        });
+        label.appendChild(input);
+        fields.appendChild(label);
+      });
+
+      panel.append(head, fields);
+      box.appendChild(panel);
+    });
+  }
+
+  function move(i, delta) {
+    const j = i + delta;
+    [data.accounts[i], data.accounts[j]] = [data.accounts[j], data.accounts[i]];
+    markDirty();
+    renderEditor();
+  }
+
+  function remove(i) {
+    const name = data.accounts[i].name || `账号 ${i + 1}`;
+    if (!confirm(`删除「${name}」？点保存后才会生效。`)) return;
+    data.accounts.splice(i, 1);
+    markDirty();
+    renderEditor();
+  }
+
+  function addAccount() {
+    const today = todayInShanghai();
+    const nums = data.accounts.map(a => (/^Claude (\d+)$/.exec(a.name || "") || [])[1]).filter(Boolean).map(Number);
+    const n = nums.length ? Math.max(...nums) + 1 : data.accounts.length + 1;
+    data.accounts.push({ name: `Claude ${n}`, owner: "", plan: "Max 5x", day: today.day, card: "", servers: "", price: "", since: today.iso });
+    markDirty();
+    renderEditor();
+    const input = document.querySelector(`input[data-i="${data.accounts.length - 1}"][data-key="owner"]`);
+    input.scrollIntoView({ behavior: "smooth", block: "center" });
+    input.focus({ preventScroll: true });
+  }
+
+  function validate() {
+    for (let i = 0; i < data.accounts.length; i++) {
+      const a = data.accounts[i];
+      const day = Number(a.day);
+      const price = Number(a.price);
+      if (!String(a.name ?? "").trim()) return [i, "name", "名称不能为空"];
+      if (a.price === "" || a.price == null || !Number.isFinite(price) || price < 0) return [i, "price", "每月总价要填数字"];
+      if (a.day === "" || !Number.isInteger(day) || day < 1 || day > 31) return [i, "day", "每月续费日要填 1 到 31 的整数"];
+      if (a.since && !/^\d{4}-\d{2}-\d{2}$/.test(a.since)) return [i, "since", "首次开通日期格式不对"];
+    }
+    return null;
+  }
+
+  function normalized() {
+    const text = v => String(v ?? "").trim();
+    return {
+      currency: text(data.currency) || "¥",
+      accounts: data.accounts.map(a => {
+        const o = {
+          name: text(a.name),
+          owner: text(a.owner),
+          plan: text(a.plan),
+          day: Number(a.day),
+          card: text(a.card),
+          servers: text(a.servers),
+          price: Number(a.price),
+        };
+        if (a.since) o.since = a.since;
+        return o;
+      }),
+    };
+  }
+
+  async function save() {
+    const problem = validate();
+    if (problem) {
+      const [i, key, msg] = problem;
+      setStatus($("status"), `${data.accounts[i].name || `第 ${i + 1} 个账号`}：${msg}`, "err");
+      const input = document.querySelector(`input[data-i="${i}"][data-key="${key}"]`);
+      input.classList.add("invalid");
+      input.scrollIntoView({ behavior: "smooth", block: "center" });
+      input.focus({ preventScroll: true });
+      return;
+    }
+    $("save").disabled = true;
+    setStatus($("status"), "正在保存…");
+    try {
+      const content = JSON.stringify(normalized(), null, 2) + "\n";
+      const res = await api("PUT", { message: "网页编辑：更新账号信息", content: b64encode(content), sha });
+      sha = res.content.sha;
+      dirty = false;
+      setStatus($("status"), "已保存，大约 1 分钟后页面更新", "ok");
+    } catch (err) {
+      setStatus($("status"), err.message, "err");
+      if (err.status === 401) { storeSet(TOKEN_KEY, null); }
+    } finally {
+      $("save").disabled = false;
+    }
+  }
+
+  $("login-form").addEventListener("submit", async e => {
+    e.preventDefault();
+    const value = $("token").value.trim();
+    if (!value) { setStatus($("login-status"), "请先粘贴令牌", "err"); return; }
+    token = value;
+    setStatus($("login-status"), "正在验证…");
+    try {
+      await loadRemote();
+      storeSet(TOKEN_KEY, token);
+      $("token").value = "";
+      showEditor();
+    } catch (err) {
+      token = null;
+      setStatus($("login-status"), err.message, "err");
+    }
+  });
+
+  $("currency").addEventListener("input", e => { data.currency = e.target.value; markDirty(); });
+  $("add").addEventListener("click", addAccount);
+  $("save").addEventListener("click", save);
+
+  $("reload").addEventListener("click", async () => {
+    if (dirty && !confirm("放弃没保存的修改，重新加载？")) return;
+    setStatus($("status"), "正在加载…");
+    try { await loadRemote(); } catch (err) { setStatus($("status"), err.message, "err"); }
+  });
+
+  $("logout").addEventListener("click", () => {
+    if (dirty && !confirm("还有没保存的修改，确定退出？")) return;
+    storeSet(TOKEN_KEY, null);
+    token = null;
+    data = null;
+    dirty = false;
+    showLogin();
+  });
+
+  window.addEventListener("beforeunload", e => {
+    if (dirty) { e.preventDefault(); e.returnValue = ""; }
+  });
+
+  (async () => {
+    const saved = storeGet(TOKEN_KEY);
+    if (!saved) { showLogin(); return; }
+    token = saved;
+    try {
+      await loadRemote();
+      showEditor();
+    } catch (err) {
+      if (err.status === 401 || err.status === 404) storeSet(TOKEN_KEY, null);
+      token = null;
+      showLogin(err.message);
+    }
+  })();
+</script>
+</body>
+</html>

@@ -1,0 +1,51 @@
+{
+  "currency": "¥",
+  "accounts": [
+    {
+      "name": "Claude 1",
+      "owner": "cancanking",
+      "plan": "Max 20x",
+      "day": 23,
+      "card": "X Card",
+      "servers": "BWG1 + ATT1",
+      "price": 1630
+    },
+    {
+      "name": "Claude 2",
+      "owner": "taotao",
+      "plan": "Max 20x",
+      "day": 29,
+      "card": "嘉信白卡",
+      "servers": "BWG1 + ATT1",
+      "price": 1335
+    },
+    {
+      "name": "Claude 3",
+      "owner": "ccmax",
+      "plan": "Max 5x",
+      "day": 29,
+      "card": "X Card",
+      "servers": "BWG2 + Atlas",
+      "price": 950
+    },
+    {
+      "name": "Claude 4",
+      "owner": "shanyao",
+      "plan": "Max 5x",
+      "day": 5,
+      "card": "X Card",
+      "servers": "BWG1 + ATT1",
+      "price": 670
+    },
+    {
+      "name": "Claude 5",
+      "owner": "Crimson",
+      "plan": "Max 5x",
+      "day": 7,
+      "card": "嘉信白卡",
+      "servers": "自备",
+      "price": 670,
+      "since": "2026-11-07"
+    }
+  ]
+}

@@ -148,6 +148,7 @@
 
   .foot { margin-top: 32px; color: var(--faint); font-size: 13px; }
   noscript p { color: var(--warn); }
+  .message { grid-column: 1 / -1; margin: 0; color: var(--muted); }
 
   @media (max-width: 480px) {
     main { padding-top: 32px; }
@@ -172,19 +173,12 @@
 </main>
 
 <script>
-  // ===== 改这里就行 =====
+  // 账号数据在 accounts.json，用 edit.html 在网页上修改
   // day：每月开通/续费日；price：每月总价（含服务器）
   // since（可选）：首次开通日期，开通当天显示“今天开通”，不算续费
-  const CURRENCY = "¥";
-  const ACCOUNTS = [
-    { name: "Claude 1", owner: "cancanking", day: 23, plan: "Max 20x", card: "X Card",   servers: "BWG1 + ATT1",  price: 1630 },
-    { name: "Claude 2", owner: "taotao",     day: 29, plan: "Max 20x", card: "嘉信白卡", servers: "BWG1 + ATT1",  price: 1335 },
-    { name: "Claude 3", owner: "ccmax",      day: 29, plan: "Max 5x",  card: "X Card",   servers: "BWG2 + Atlas", price: 950 },
-    { name: "Claude 4", owner: "shanyao",    day: 5,  plan: "Max 5x",  card: "X Card",   servers: "BWG1 + ATT1",  price: 670 },
-    { name: "Claude 5", owner: "Crimson",    day: 7,  plan: "Max 5x",  card: "嘉信白卡", servers: "自备",         price: 670, since: "2026-11-07" },
-  ];
+  let CURRENCY = "¥";
+  let ACCOUNTS = [];
   const SOON_DAYS = 3; // 剩余天数不超过这个值时标红
-  // =====================
 
   const DAY_MS = 86400000;
   const WEEKDAYS = ["日", "一", "二", "三", "四", "五", "六"];
@@ -253,13 +247,20 @@
 
     const rows = ACCOUNTS.map(a => {
       const since = parseDate(a.since);
-      return { ...a, c: cycleOf(today, a.day, since), openedToday: since === today };
+      const day = Number(a.day);
+      return { ...a, day, price: Number(a.price) || 0, c: cycleOf(today, day, since), openedToday: since === today };
     });
+
+    const next = document.getElementById("next");
+    if (!rows.length) {
+      next.hidden = true;
+      showMessage("还没有账号。");
+      return;
+    }
 
     const minLeft = Math.min(...rows.map(r => r.c.left));
     const soonest = rows.filter(r => r.c.left === minLeft);
     const when = minLeft === 0 ? "今天" : `${minLeft} 天后`;
-    const next = document.getElementById("next");
     next.innerHTML = `下一次续费：<b>${esc(soonest.map(r => r.name).join("、"))}</b> · ${fmtDate(soonest[0].c.next, today)}（${when}）`;
     next.hidden = false;
 
@@ -292,14 +293,40 @@
           </dl>
           <div class="total">
             <span class="label">总价</span>
-            <span><strong>${CURRENCY}${r.price.toLocaleString("zh-CN")}</strong><small>/ 月</small></span>
+            <span><strong>${esc(CURRENCY)}${r.price.toLocaleString("zh-CN")}</strong><small>/ 月</small></span>
           </div>
         </article>`;
     }).join("");
   }
 
-  render();
-  setInterval(render, 10 * 60 * 1000);
+  function showMessage(text) {
+    const box = document.getElementById("cards");
+    box.innerHTML = "";
+    const p = document.createElement("p");
+    p.className = "message";
+    p.textContent = text;
+    box.appendChild(p);
+  }
+
+  async function loadData() {
+    try {
+      // 加时间参数绕过缓存，网页编辑保存后刷新就能看到新数据
+      const res = await fetch(`accounts.json?t=${Date.now()}`, { cache: "no-store" });
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      const data = await res.json();
+      CURRENCY = typeof data.currency === "string" ? data.currency : "¥";
+      ACCOUNTS = Array.isArray(data.accounts) ? data.accounts : [];
+    } catch (err) {
+      if (!ACCOUNTS.length) {
+        showMessage(`账号数据加载失败（${err.message}），请稍后刷新。`);
+        return;
+      }
+    }
+    render();
+  }
+
+  loadData();
+  setInterval(loadData, 10 * 60 * 1000);
 </script>
 </body>
 </html>
