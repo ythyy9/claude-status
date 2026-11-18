@@ -41,11 +41,11 @@
       "name": "Claude 5",
       "owner": "Crimson",
       "plan": "Max 5x",
-      "day": 7,
-      "card": "嘉信白卡",
-      "servers": "自备",
-      "price": 670,
-      "since": "2026-11-07"
+      "day": 14,
+      "card": "X Card",
+      "servers": "自备中转+Atlas2",
+      "price": 855,
+      "since": "2026-11-14"
     }
   ]
 }
